@@ -129,6 +129,16 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:v
   .endpoint{padding:.6rem .75rem}
 }
 </style>
+<!-- Google Analytics 4 — Replace G-THREATLEDGER1 with your ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-THREATLEDGER1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-THREATLEDGER1');
+      // Custom events
+      function trackEvent(name, params) { gtag('event', name, params); }
+    </script>
 </head>
 <body>
 
