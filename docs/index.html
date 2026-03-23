@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThreatLedger — API Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0F172A;--text:#E2E8F0;--accent:#0A84FF;--border:#1E293B;--code-bg:#0D1117;--text-dim:#94A3B8;--green:#22C55E;--yellow:#FACC15;--red:#EF4444;--orange:#F97316;--purple:#A78BFA;--cyan:#22D3EE;--pink:#F472B6}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+code,pre{font-family:'JetBrains Mono',monospace}
+a{color:var(--accent);text-decoration:none;transition:opacity .2s}
+a:hover{opacity:.8}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:rgba(15,23,42,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.15rem;color:var(--text)}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:1.5rem;font-size:.9rem;font-weight:500}
+.nav-links a{color:var(--text-dim)}
+.nav-links a.active{color:var(--accent);position:relative}
+.nav-links a.active::after{content:'';position:absolute;bottom:-19px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px}
+
+/* Container */
+.container{max-width:960px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* Hero */
+.hero{text-align:center;padding:4rem 0 3rem}
+.hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem}
+.hero .sub{color:var(--text-dim);font-size:1.1rem;margin-bottom:1.5rem}
+.base-url{display:inline-block;background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:.6rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--accent);letter-spacing:.01em}
+
+/* Section */
+.section{margin-top:3.5rem}
+.section-title{font-size:1.5rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem}
+.section-title .icon{font-size:1.3rem}
+.section-desc{color:var(--text-dim);margin-bottom:1.5rem;font-size:.95rem}
+
+/* Endpoint card */
+.endpoint{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;margin-bottom:2rem;overflow:hidden}
+.endpoint-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.method{display:inline-block;padding:.2rem .65rem;border-radius:6px;font-size:.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.04em}
+.method.get{background:rgba(34,197,94,.15);color:var(--green)}
+.method.post{background:rgba(10,132,255,.15);color:var(--accent)}
+.method.delete{background:rgba(239,68,68,.15);color:var(--red)}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:500}
+.endpoint-summary{color:var(--text-dim);font-size:.85rem;margin-left:auto}
+.endpoint-body{padding:1.5rem}
+.endpoint-body h4{font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin-bottom:.75rem}
+.endpoint-body h4:not(:first-child){margin-top:1.5rem}
+
+/* Tables */
+.param-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:.5rem}
+.param-table th{text-align:left;padding:.5rem .75rem;background:rgba(30,41,59,.5);color:var(--text-dim);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.param-table td{padding:.5rem .75rem;border-top:1px solid var(--border)}
+.param-table .param-name{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:.85rem}
+.param-table .param-type{color:var(--purple);font-size:.8rem}
+.param-table .required{color:var(--red);font-size:.75rem;font-weight:600}
+.param-table .optional{color:var(--text-dim);font-size:.75rem}
+
+/* Code blocks */
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;overflow-x:auto;font-size:.85rem;line-height:1.6;margin:.5rem 0}
+.endpoint pre{border:1px solid var(--border);background:rgba(15,23,42,.6)}
+.token-str{color:#A5D6FF}
+.token-key{color:var(--cyan)}
+.token-num{color:var(--orange)}
+.token-kw{color:var(--pink)}
+.token-comment{color:#6A737D;font-style:italic}
+.token-fn{color:var(--purple)}
+.token-cmd{color:var(--green)}
+.token-flag{color:var(--yellow)}
+.token-url{color:var(--accent)}
+
+/* Rate limit / error tables */
+.info-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+.info-table th{text-align:left;padding:.6rem 1rem;background:var(--code-bg);border:1px solid var(--border);color:var(--text-dim);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.info-table td{padding:.6rem 1rem;border:1px solid var(--border)}
+.info-table tr:nth-child(even) td{background:rgba(15,23,42,.4)}
+.badge-free{color:var(--text-dim);font-weight:600}
+.badge-starter{color:var(--accent);font-weight:600}
+.badge-pro{color:var(--green);font-weight:600}
+.status-code{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.85rem}
+.status-code.s4xx{color:var(--red)}
+
+/* CTA */
+.cta{text-align:center;margin:4rem 0 2rem}
+.cta-btn{display:inline-block;background:var(--accent);color:#fff;font-weight:700;font-size:1.05rem;padding:.85rem 2.4rem;border-radius:10px;transition:all .2s;box-shadow:0 0 24px rgba(10,132,255,.25)}
+.cta-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 0 32px rgba(10,132,255,.35)}
+
+/* Footer */
+.footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);color:var(--text-dim);font-size:.82rem;margin-top:2rem}
+
+/* Responsive */
+@media(max-width:640px){
+  .hero h1{font-size:1.8rem}
+  .container{padding:1.5rem 1rem 3rem}
+  .endpoint-header{flex-direction:column;align-items:flex-start;gap:.4rem}
+  .endpoint-summary{margin-left:0}
+  .param-table,.info-table{font-size:.8rem}
+  .param-table th,.param-table td,.info-table th,.info-table td{padding:.4rem .5rem}
+  .nav{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#0A84FF"/><path d="M7 14l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    ThreatLedger
+  </div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#" class="active">Docs</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- Hero -->
+<section class="hero">
+  <h1>API Documentation</h1>
+  <p class="sub">API 开发文档 — Crypto Threat Intelligence at your fingertips</p>
+  <div class="base-url">https://api.threatledger.net/v1</div>
+</section>
+
+<!-- Authentication -->
+<section class="section" id="auth">
+  <h2 class="section-title"><span class="icon">🔑</span> Authentication 认证</h2>
+  <p class="section-desc">所有 API 请求需要 Bearer Token。通过以下接口获取 token：</p>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method post">POST</span>
+      <span class="endpoint-path">/v1/auth/token</span>
+      <span class="endpoint-summary">获取访问令牌 / Obtain access token</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Request Body</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-flag">-X POST</span> <span class="token-url">https://api.threatledger.net/v1/auth/token</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Content-Type: application/json"</span> \
+  <span class="token-flag">-d</span> <span class="token-str">'{
+    "api_key": "tl_live_abc123...",
+    "api_secret": "sk_..."
+  }'</span></pre>
+
+      <h4>Response</h4>
+      <pre>{
+  <span class="token-key">"access_token"</span>: <span class="token-str">"eyJhbGciOiJIUzI1NiIs..."</span>,
+  <span class="token-key">"token_type"</span>: <span class="token-str">"Bearer"</span>,
+  <span class="token-key">"expires_in"</span>: <span class="token-num">3600</span>,
+  <span class="token-key">"scope"</span>: <span class="token-str">"read write"</span>
+}</pre>
+      <p style="color:var(--text-dim);font-size:.85rem;margin-top:.75rem">💡 将 <code>access_token</code> 添加到后续请求头：<code>Authorization: Bearer &lt;token&gt;</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- Endpoint 1: Health -->
+<section class="section" id="health">
+  <h2 class="section-title"><span class="icon">💚</span> Endpoints 接口</h2>
+  <p class="section-desc">以下是所有可用的 API 端点：</p>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/v1/health</span>
+      <span class="endpoint-summary">健康检查 / Health check</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Parameters</h4>
+      <p style="color:var(--text-dim);font-size:.88rem;margin-bottom:.5rem">无参数 / No parameters required</p>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-url">https://api.threatledger.net/v1/health</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"status"</span>: <span class="token-str">"ok"</span>,
+  <span class="token-key">"version"</span>: <span class="token-str">"1.4.2"</span>,
+  <span class="token-key">"uptime"</span>: <span class="token-num">864023</span>,
+  <span class="token-key">"timestamp"</span>: <span class="token-str">"2026-03-23T09:30:00Z"</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- Endpoint 2: Check Address -->
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/v1/addresses/check</span>
+      <span class="endpoint-summary">地址风险检查 / Check address risk</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Parameters</h4>
+      <table class="param-table">
+        <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="param-name">address</td><td class="param-type">string</td><td><span class="required">Required</span></td><td>区块链地址（支持 EVM / BTC / SOL）</td></tr>
+          <tr><td class="param-name">chain</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td>链标识，默认自动检测。如 <code>ETH</code>, <code>BSC</code>, <code>BTC</code></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-url">"https://api.threatledger.net/v1/addresses/check?address=0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"address"</span>: <span class="token-str">"0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"</span>,
+  <span class="token-key">"chain"</span>: <span class="token-str">"ETH"</span>,
+  <span class="token-key">"risk_score"</span>: <span class="token-num">87</span>,
+  <span class="token-key">"risk_level"</span>: <span class="token-str">"critical"</span>,
+  <span class="token-key">"entity"</span>: <span class="token-str">"Lazarus Group Wallet"</span>,
+  <span class="token-key">"tier"</span>: <span class="token-str">"nation-state"</span>,
+  <span class="token-key">"labels"</span>: [<span class="token-str">"sanctioned"</span>, <span class="token-str">"mixer-user"</span>, <span class="token-str">"high-volume"</span>],
+  <span class="token-key">"first_seen"</span>: <span class="token-str">"2023-06-14T00:00:00Z"</span>,
+  <span class="token-key">"last_active"</span>: <span class="token-str">"2026-03-20T14:22:00Z"</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- Endpoint 3: List Incidents -->
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/v1/incidents</span>
+      <span class="endpoint-summary">安全事件列表 / List incidents (paginated)</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Parameters</h4>
+      <table class="param-table">
+        <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="param-name">chain</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td>按链过滤，如 <code>ETH</code>, <code>BSC</code>, <code>SOL</code></td></tr>
+          <tr><td class="param-name">severity</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td><code>low</code> | <code>medium</code> | <code>high</code> | <code>critical</code></td></tr>
+          <tr><td class="param-name">page</td><td class="param-type">integer</td><td><span class="optional">Optional</span></td><td>页码，默认 <code>1</code></td></tr>
+          <tr><td class="param-name">per_page</td><td class="param-type">integer</td><td><span class="optional">Optional</span></td><td>每页数量，默认 <code>20</code>，最大 <code>100</code></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-url">"https://api.threatledger.net/v1/incidents?chain=ETH&severity=critical&page=1"</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"data"</span>: [
+    {
+      <span class="token-key">"id"</span>: <span class="token-str">"INC-2026-0847"</span>,
+      <span class="token-key">"title"</span>: <span class="token-str">"DeFi Protocol Exploit — $12M drained"</span>,
+      <span class="token-key">"chain"</span>: <span class="token-str">"ETH"</span>,
+      <span class="token-key">"severity"</span>: <span class="token-str">"critical"</span>,
+      <span class="token-key">"amount_usd"</span>: <span class="token-num">12000000</span>,
+      <span class="token-key">"date"</span>: <span class="token-str">"2026-03-19T08:15:00Z"</span>,
+      <span class="token-key">"actor"</span>: <span class="token-str">"Unknown"</span>
+    }
+  ],
+  <span class="token-key">"pagination"</span>: {
+    <span class="token-key">"page"</span>: <span class="token-num">1</span>,
+    <span class="token-key">"per_page"</span>: <span class="token-num">20</span>,
+    <span class="token-key">"total"</span>: <span class="token-num">142</span>,
+    <span class="token-key">"total_pages"</span>: <span class="token-num">8</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Endpoint 4: List Actors -->
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/v1/actors</span>
+      <span class="endpoint-summary">威胁实体列表 / List threat actors</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Parameters</h4>
+      <table class="param-table">
+        <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="param-name">tier</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td><code>nation-state</code> | <code>organized-crime</code> | <code>scammer</code> | <code>hacktivist</code></td></tr>
+          <tr><td class="param-name">search</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td>模糊搜索名称关键词</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-url">"https://api.threatledger.net/v1/actors?tier=nation-state"</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"data"</span>: [
+    {
+      <span class="token-key">"id"</span>: <span class="token-str">"ACT-001"</span>,
+      <span class="token-key">"name"</span>: <span class="token-str">"Lazarus Group"</span>,
+      <span class="token-key">"tier"</span>: <span class="token-str">"nation-state"</span>,
+      <span class="token-key">"origin"</span>: <span class="token-str">"DPRK"</span>,
+      <span class="token-key">"total_stolen_usd"</span>: <span class="token-num">3200000000</span>,
+      <span class="token-key">"active_addresses"</span>: <span class="token-num">847</span>,
+      <span class="token-key">"last_active"</span>: <span class="token-str">"2026-03-21T00:00:00Z"</span>
+    }
+  ]
+}</pre>
+    </div>
+  </div>
+
+  <!-- Endpoint 5: Usage -->
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/v1/usage</span>
+      <span class="endpoint-summary">用量查询 / Check API usage &amp; credits</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Parameters</h4>
+      <p style="color:var(--text-dim);font-size:.88rem;margin-bottom:.5rem">无参数 / No parameters — uses your authenticated account</p>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-url">https://api.threatledger.net/v1/usage</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"plan"</span>: <span class="token-str">"pro"</span>,
+  <span class="token-key">"credits_total"</span>: <span class="token-num">50000</span>,
+  <span class="token-key">"credits_used"</span>: <span class="token-num">12480</span>,
+  <span class="token-key">"credits_remaining"</span>: <span class="token-num">37520</span>,
+  <span class="token-key">"requests_today"</span>: <span class="token-num">342</span>,
+  <span class="token-key">"billing_cycle_end"</span>: <span class="token-str">"2026-04-01T00:00:00Z"</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- Endpoint 6: Batch Check -->
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method post">POST</span>
+      <span class="endpoint-path">/v1/addresses/batch</span>
+      <span class="endpoint-summary">批量地址检查 / Batch address check</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Request Body</h4>
+      <table class="param-table">
+        <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="param-name">addresses</td><td class="param-type">string[]</td><td><span class="required">Required</span></td><td>地址数组，最多 100 个</td></tr>
+          <tr><td class="param-name">chain</td><td class="param-type">string</td><td><span class="optional">Optional</span></td><td>指定链，不传则自动检测</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Example Request</h4>
+      <pre><span class="token-cmd">curl</span> <span class="token-flag">-X POST</span> <span class="token-url">https://api.threatledger.net/v1/addresses/batch</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Authorization: Bearer &lt;token&gt;"</span> \
+  <span class="token-flag">-H</span> <span class="token-str">"Content-Type: application/json"</span> \
+  <span class="token-flag">-d</span> <span class="token-str">'{
+    "addresses": [
+      "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18",
+      "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    ]
+  }'</span></pre>
+
+      <h4>Example Response</h4>
+      <pre>{
+  <span class="token-key">"results"</span>: [
+    {
+      <span class="token-key">"address"</span>: <span class="token-str">"0x742d...bD18"</span>,
+      <span class="token-key">"risk_score"</span>: <span class="token-num">87</span>,
+      <span class="token-key">"risk_level"</span>: <span class="token-str">"critical"</span>,
+      <span class="token-key">"entity"</span>: <span class="token-str">"Lazarus Group Wallet"</span>,
+      <span class="token-key">"tier"</span>: <span class="token-str">"nation-state"</span>
+    },
+    {
+      <span class="token-key">"address"</span>: <span class="token-str">"0xdAC1...1ec7"</span>,
+      <span class="token-key">"risk_score"</span>: <span class="token-num">5</span>,
+      <span class="token-key">"risk_level"</span>: <span class="token-str">"low"</span>,
+      <span class="token-key">"entity"</span>: <span class="token-str">"Tether Treasury"</span>,
+      <span class="token-key">"tier"</span>: <span class="token-str">"legitimate"</span>
+    },
+    {
+      <span class="token-key">"address"</span>: <span class="token-str">"0xA0b8...eB48"</span>,
+      <span class="token-key">"risk_score"</span>: <span class="token-num">3</span>,
+      <span class="token-key">"risk_level"</span>: <span class="token-str">"low"</span>,
+      <span class="token-key">"entity"</span>: <span class="token-str">"Circle USDC Contract"</span>,
+      <span class="token-key">"tier"</span>: <span class="token-str">"legitimate"</span>
+    }
+  ],
+  <span class="token-key">"credits_consumed"</span>: <span class="token-num">3</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- Rate Limits -->
+<section class="section" id="rate-limits">
+  <h2 class="section-title"><span class="icon">⚡</span> Rate Limits 速率限制</h2>
+  <p class="section-desc">请求速率按套餐等级分配，超出限制将返回 <code>429</code> 错误。</p>
+
+  <table class="info-table">
+    <thead><tr><th>Plan 套餐</th><th>Requests / min</th><th>Daily Limit</th><th>Batch Size</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge-free">Free</span></td><td>10</td><td>500</td><td>10</td></tr>
+      <tr><td><span class="badge-starter">Starter</span></td><td>60</td><td>5,000</td><td>50</td></tr>
+      <tr><td><span class="badge-pro">Pro</span></td><td>300</td><td>Unlimited</td><td>100</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:1.05rem;margin-top:2rem;margin-bottom:.75rem">Response Headers 响应头</h3>
+  <p class="section-desc">每个响应都包含以下速率限制和额度信息头：</p>
+  <table class="info-table">
+    <thead><tr><th>Header</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>X-RateLimit-Limit</code></td><td>当前窗口允许的最大请求数</td></tr>
+      <tr><td><code>X-RateLimit-Remaining</code></td><td>当前窗口剩余请求数</td></tr>
+      <tr><td><code>X-RateLimit-Reset</code></td><td>窗口重置时间（Unix timestamp）</td></tr>
+      <tr><td><code>X-Credits-Remaining</code></td><td>账户剩余额度</td></tr>
+      <tr><td><code>X-Credits-Consumed</code></td><td>本次请求消耗的额度</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Error Codes -->
+<section class="section" id="errors">
+  <h2 class="section-title"><span class="icon">🚨</span> Error Codes 错误码</h2>
+  <p class="section-desc">API 使用标准 HTTP 状态码，错误响应格式如下：</p>
+
+  <pre>{
+  <span class="token-key">"error"</span>: {
+    <span class="token-key">"code"</span>: <span class="token-num">401</span>,
+    <span class="token-key">"type"</span>: <span class="token-str">"unauthorized"</span>,
+    <span class="token-key">"message"</span>: <span class="token-str">"Invalid or expired access token"</span>
+  }
+}</pre>
+
+  <table class="info-table" style="margin-top:1.5rem">
+    <thead><tr><th>Code</th><th>Type</th><th>Description 描述</th></tr></thead>
+    <tbody>
+      <tr><td><span class="status-code s4xx">400</span></td><td>Bad Request</td><td>请求参数错误或缺失 — Missing or invalid parameters</td></tr>
+      <tr><td><span class="status-code s4xx">401</span></td><td>Unauthorized</td><td>认证失败，Token 无效或过期 — Invalid/expired token</td></tr>
+      <tr><td><span class="status-code s4xx">404</span></td><td>Not Found</td><td>请求的资源不存在 — Resource not found</td></tr>
+      <tr><td><span class="status-code s4xx">429</span></td><td>Too Many Requests</td><td>超出速率限制，请稍后重试 — Rate limit exceeded</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Code Examples -->
+<section class="section" id="examples">
+  <h2 class="section-title"><span class="icon">💻</span> Code Examples 代码示例</h2>
+  <p class="section-desc">常用语言的集成示例 / Integration examples in popular languages</p>
+
+  <h3 style="font-size:1.05rem;margin-bottom:.75rem">JavaScript (fetch)</h3>
+  <pre><span class="token-kw">const</span> <span class="token-fn">checkAddress</span> = <span class="token-kw">async</span> (address) => {
+  <span class="token-kw">const</span> res = <span class="token-kw">await</span> <span class="token-fn">fetch</span>(
+    <span class="token-str">`https://api.threatledger.net/v1/addresses/check?address=<span class="token-kw">${</span>address<span class="token-kw">}</span>`</span>,
+    {
+      <span class="token-key">headers</span>: {
+        <span class="token-str">"Authorization"</span>: <span class="token-str">`Bearer <span class="token-kw">${</span>API_TOKEN<span class="token-kw">}</span>`</span>,
+      },
+    }
+  );
+
+  <span class="token-kw">if</span> (!res.ok) {
+    <span class="token-kw">const</span> err = <span class="token-kw">await</span> res.<span class="token-fn">json</span>();
+    <span class="token-kw">throw new</span> <span class="token-fn">Error</span>(err.error.message);
+  }
+
+  <span class="token-kw">return</span> res.<span class="token-fn">json</span>();
+};
+
+<span class="token-comment">// 使用示例 / Usage</span>
+<span class="token-kw">const</span> result = <span class="token-kw">await</span> <span class="token-fn">checkAddress</span>(<span class="token-str">"0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"</span>);
+console.<span class="token-fn">log</span>(result.risk_level); <span class="token-comment">// "critical"</span></pre>
+
+  <h3 style="font-size:1.05rem;margin-top:2rem;margin-bottom:.75rem">Python (requests)</h3>
+  <pre><span class="token-kw">import</span> requests
+
+API_TOKEN = <span class="token-str">"your_access_token"</span>
+BASE_URL  = <span class="token-str">"https://api.threatledger.net/v1"</span>
+
+<span class="token-kw">def</span> <span class="token-fn">check_address</span>(address: <span class="token-fn">str</span>) -> <span class="token-fn">dict</span>:
+    resp = requests.<span class="token-fn">get</span>(
+        <span class="token-str">f"<span class="token-kw">{</span>BASE_URL<span class="token-kw">}</span>/addresses/check"</span>,
+        params={<span class="token-str">"address"</span>: address},
+        headers={<span class="token-str">"Authorization"</span>: <span class="token-str">f"Bearer <span class="token-kw">{</span>API_TOKEN<span class="token-kw">}</span>"</span>},
+    )
+    resp.<span class="token-fn">raise_for_status</span>()
+    <span class="token-kw">return</span> resp.<span class="token-fn">json</span>()
+
+<span class="token-comment"># 批量检查 / Batch check</span>
+<span class="token-kw">def</span> <span class="token-fn">batch_check</span>(addresses: <span class="token-fn">list</span>) -> <span class="token-fn">dict</span>:
+    resp = requests.<span class="token-fn">post</span>(
+        <span class="token-str">f"<span class="token-kw">{</span>BASE_URL<span class="token-kw">}</span>/addresses/batch"</span>,
+        json={<span class="token-str">"addresses"</span>: addresses},
+        headers={<span class="token-str">"Authorization"</span>: <span class="token-str">f"Bearer <span class="token-kw">{</span>API_TOKEN<span class="token-kw">}</span>"</span>},
+    )
+    resp.<span class="token-fn">raise_for_status</span>()
+    <span class="token-kw">return</span> resp.<span class="token-fn">json</span>()
+
+<span class="token-comment"># 使用示例 / Usage</span>
+result = <span class="token-fn">check_address</span>(<span class="token-str">"0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"</span>)
+<span class="token-fn">print</span>(<span class="token-str">f"Risk: <span class="token-kw">{</span>result[<span class="token-str">'risk_level'</span>]<span class="token-kw">}</span> (<span class="token-kw">{</span>result[<span class="token-str">'risk_score'</span>]<span class="token-kw">}</span>/100)"</span>)
+<span class="token-comment"># Risk: critical (87/100)</span></pre>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <p style="color:var(--text-dim);font-size:1.05rem;margin-bottom:1.2rem">准备好开始了吗？/ Ready to get started?</p>
+  <a href="#" class="cta-btn">🔑 Get API Key</a>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>© 2026 ZeroVector Limited. All rights reserved.</p>
+  <p style="margin-top:.3rem">ThreatLedger — Crypto Threat Intelligence API</p>
+</footer>
+
+</div>
+</body>
+</html>
