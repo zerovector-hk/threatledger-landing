@@ -1,517 +1,476 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThreatLedger — 加密威脅情報平台 | ZeroVector</title>
-    <meta name="description" content="ThreatLedger：AI 驅動的加密貨幣威脅分析與情報共享平台。每日同步 SlowMist、Etherscan、Forta、OFAC 數據。">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThreatLedger — 威胁情报 API Playground</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0F172A;--surface:#1E293B;--border:#1E293B;--text:#E2E8F0;--text-dim:#94A3B8;--accent:#0A84FF;--accent-glow:rgba(10,132,255,0.15);--critical:#EF4444;--high:#F59E0B;--clean:#22C55E;--font:'Inter',system-ui,-apple-system,sans-serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none;transition:opacity .2s}
+a:hover{opacity:.8}
 
-        :root {
-            --bg-primary: #0F172A;
-            --bg-card: #1E293B;
-            --bg-card-hover: #253449;
-            --text-primary: #E2E8F0;
-            --text-secondary: #94A3B8;
-            --accent: #0A84FF;
-            --accent-dim: rgba(10, 132, 255, 0.15);
-            --border: #1E293B;
-            --glow: rgba(10, 132, 255, 0.3);
-        }
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.15rem;color:var(--text)}
+.nav-logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem;color:var(--text-dim)}
+.nav-links a{color:var(--text-dim)}
+.nav-links a:hover{color:var(--text)}
 
-        html { scroll-behavior: smooth; }
+/* Sections */
+section{padding:6rem 1.5rem 4rem;max-width:960px;margin:0 auto}
+.hero{text-align:center;padding-top:8rem}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.2;margin-bottom:.75rem;background:linear-gradient(135deg,var(--text) 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{font-size:1.1rem;color:var(--text-dim);margin-bottom:.5rem}
+.hero .sub-en{font-size:.9rem;color:var(--text-dim);opacity:.7}
+.badge-row{display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap}
+.badge{font-size:.75rem;padding:.3rem .75rem;border-radius:999px;border:1px solid var(--border);color:var(--text-dim);background:rgba(30,41,59,.5)}
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+/* Demo */
+.demo-section{margin-top:2rem}
+.demo-section h2{text-align:center;font-size:1.5rem;margin-bottom:.25rem}
+.demo-section .desc{text-align:center;color:var(--text-dim);font-size:.9rem;margin-bottom:2rem}
+.input-row{display:flex;gap:.75rem;max-width:640px;margin:0 auto 1.5rem}
+.input-row input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;color:var(--text);font-size:.9rem;font-family:var(--font);outline:none;transition:border-color .2s}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input::placeholder{color:var(--text-dim)}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:.8rem 1.5rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap}
+.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-outline{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.btn-outline:hover{background:var(--accent-glow)}
+.btn-lg{padding:1rem 2.5rem;font-size:1rem;border-radius:12px}
 
-        /* Animated background grid */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image:
-                linear-gradient(rgba(10, 132, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(10, 132, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 0;
-        }
+/* Preset buttons */
+.presets{display:flex;gap:.5rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap}
+.preset-btn{font-size:.75rem;padding:.35rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;font-family:var(--font);transition:all .2s}
+.preset-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+/* Result card */
+.result-card{max-width:640px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;display:none;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.result-header{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem}
+.risk-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.risk-ring svg{transform:rotate(-90deg)}
+.risk-ring .score-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700}
+.result-info{flex:1}
+.result-entity{font-size:1.15rem;font-weight:700;margin-bottom:.25rem}
+.result-level{display:inline-block;font-size:.7rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+.level-critical{background:rgba(239,68,68,.15);color:var(--critical)}
+.level-high{background:rgba(245,158,11,.15);color:var(--high)}
+.level-clean{background:rgba(34,197,94,.15);color:var(--clean)}
+.result-tags{display:flex;gap:.4rem;margin-top:.75rem;flex-wrap:wrap}
+.tag{font-size:.7rem;padding:.2rem .55rem;border-radius:6px;background:rgba(10,132,255,.1);color:var(--accent);border:1px solid rgba(10,132,255,.2)}
 
-        /* ─── NAV ─── */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-            padding: 0 24px;
-        }
-        .nav-inner {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
-            height: 64px;
-        }
-        .logo {
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 700; font-size: 1.25rem;
-            color: var(--text-primary); text-decoration: none;
-        }
-        .logo-icon {
-            width: 32px; height: 32px;
-            background: var(--accent);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: #fff; font-weight: 800;
-        }
-        .nav-links { display: flex; gap: 28px; list-style: none; }
-        .nav-links a {
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 0.9rem; font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--accent); }
-        .nav-cta {
-            background: var(--accent); color: #fff !important;
-            padding: 8px 20px; border-radius: 8px;
-            font-weight: 600; font-size: 0.85rem;
-            transition: opacity 0.2s;
-        }
-        .nav-cta:hover { opacity: 0.85; }
-        .mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+/* JSON block */
+.json-block{max-width:640px;margin:1.5rem auto 0;background:#0B1120;border:1px solid var(--border);border-radius:12px;overflow:hidden;display:none;animation:fadeUp .4s ease}
+.json-header{display:flex;justify-content:space-between;align-items:center;padding:.6rem 1rem;background:rgba(30,41,59,.5);border-bottom:1px solid var(--border);font-size:.75rem;color:var(--text-dim)}
+.json-header button{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:.2rem .5rem;border-radius:6px;font-size:.7rem;cursor:pointer;font-family:var(--font)}
+.json-header button:hover{color:var(--text);border-color:var(--text-dim)}
+.json-block pre{padding:1rem;overflow-x:auto;font-size:.78rem;line-height:1.6;color:var(--text-dim);font-family:'SF Mono','Fira Code',monospace}
+.json-block .k{color:#7DD3FC}.json-block .s{color:#86EFAC}.json-block .n{color:#FCA5A5}.json-block .b{color:#C4B5FD}
 
-        /* ─── HERO ─── */
-        .hero {
-            padding: 160px 0 100px;
-            text-align: center;
-            position: relative;
-        }
-        .hero::after {
-            content: '';
-            position: absolute;
-            top: 80px; left: 50%; transform: translateX(-50%);
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--accent-dim);
-            border: 1px solid rgba(10, 132, 255, 0.3);
-            border-radius: 100px;
-            padding: 6px 18px;
-            font-size: 0.8rem; font-weight: 500;
-            color: var(--accent);
-            margin-bottom: 28px;
-        }
-        .hero-badge .pulse {
-            width: 8px; height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
-        }
-        .hero h1 {
-            font-size: clamp(2.2rem, 5vw, 3.8rem);
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-        .hero h1 .accent { color: var(--accent); }
-        .hero .subtitle {
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin-bottom: 8px;
-        }
-        .hero .subtitle-en {
-            font-size: clamp(0.9rem, 2vw, 1.15rem);
-            color: var(--text-secondary);
-            font-weight: 300;
-            opacity: 0.7;
-            margin-bottom: 40px;
-        }
-        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn-primary {
-            background: var(--accent);
-            color: #fff; padding: 14px 36px;
-            border-radius: 12px; text-decoration: none;
-            font-weight: 600; font-size: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: none; cursor: pointer;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-primary); padding: 14px 36px;
-            border-radius: 12px; text-decoration: none;
-            font-weight: 600; font-size: 1rem;
-            border: 1px solid var(--border);
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .btn-secondary:hover { border-color: var(--accent); background: var(--accent-dim); }
+/* Stats */
+.stats-section{text-align:center}
+.stats-section h2{font-size:1.5rem;margin-bottom:.5rem}
+.stats-section .desc{color:var(--text-dim);font-size:.9rem;margin-bottom:2.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem 1rem;transition:border-color .2s}
+.stat-card:hover{border-color:var(--accent)}
+.stat-num{font-size:2rem;font-weight:800;color:var(--accent);margin-bottom:.25rem}
+.stat-label{font-size:.85rem;color:var(--text-dim)}
 
-        /* ─── STATS BAR ─── */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            margin: 80px auto 0;
-            max-width: 720px;
-        }
-        .stat-item {
-            background: var(--bg-primary);
-            padding: 28px 20px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2rem; font-weight: 800;
-            color: var(--accent);
-            margin-bottom: 4px;
-        }
-        .stat-label {
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
+/* Endpoints */
+.endpoints-section h2{text-align:center;font-size:1.5rem;margin-bottom:.5rem}
+.endpoints-section .desc{text-align:center;color:var(--text-dim);font-size:.9rem;margin-bottom:2rem}
+.endpoint-list{display:flex;flex-direction:column;gap:.6rem;max-width:640px;margin:0 auto}
+.endpoint{display:flex;align-items:center;gap:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;transition:border-color .2s}
+.endpoint:hover{border-color:var(--accent)}
+.method{font-size:.7rem;font-weight:700;padding:.2rem .5rem;border-radius:5px;min-width:42px;text-align:center;font-family:var(--font)}
+.method-get{background:rgba(34,197,94,.15);color:var(--clean)}
+.method-post{background:rgba(10,132,255,.15);color:var(--accent)}
+.endpoint-path{font-size:.85rem;font-family:'SF Mono','Fira Code',monospace;color:var(--text)}
+.endpoint-desc{margin-left:auto;font-size:.75rem;color:var(--text-dim);text-align:right}
 
-        /* ─── SECTIONS ─── */
-        section { padding: 100px 0; }
-        .section-label {
-            text-transform: uppercase;
-            font-size: 0.75rem; font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 0.12em;
-            margin-bottom: 12px;
-        }
-        .section-title {
-            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.01em;
-        }
-        .section-desc {
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin-bottom: 48px;
-            font-size: 1.05rem;
-        }
-        .section-center { text-align: center; }
-        .section-center .section-desc { margin-left: auto; margin-right: auto; }
+/* CTA */
+.cta-section{text-align:center;padding:4rem 1.5rem 3rem}
+.cta-section h2{font-size:1.8rem;font-weight:800;margin-bottom:.5rem}
+.cta-section p{color:var(--text-dim);margin-bottom:2rem}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
 
-        /* ─── FEATURES ─── */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        .feature-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px 28px;
-            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        }
-        .feature-card:hover {
-            border-color: rgba(10, 132, 255, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-        }
-        .feature-icon {
-            width: 48px; height: 48px;
-            background: var(--accent-dim);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
-        .feature-card h3 {
-            font-size: 1.1rem; font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
+/* Footer */
+footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text-dim);font-size:.8rem}
 
-        /* ─── DATA SOURCES ─── */
-        .sources-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        .source-card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 36px 24px;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-        .source-card:hover { border-color: rgba(10, 132, 255, 0.3); }
-        .source-icon {
-            width: 56px; height: 56px;
-            background: var(--accent-dim);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 24px;
-        }
-        .source-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
-        .source-card p { color: var(--text-secondary); font-size: 0.82rem; }
+/* Loading animation */
+.loading{display:none;text-align:center;padding:2rem}
+.loading .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto .75rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading span{font-size:.85rem;color:var(--text-dim)}
 
-        /* ─── CTA ─── */
-        .cta-section {
-            padding: 80px 0 100px;
-        }
-        .cta-box {
-            background: linear-gradient(135deg, rgba(10, 132, 255, 0.12) 0%, rgba(10, 132, 255, 0.04) 100%);
-            border: 1px solid rgba(10, 132, 255, 0.25);
-            border-radius: 24px;
-            padding: 64px 48px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-box::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at 50% 120%, var(--glow) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        .cta-box h2 {
-            font-size: clamp(1.5rem, 3vw, 2.2rem);
-            font-weight: 700;
-            margin-bottom: 12px;
-            position: relative;
-        }
-        .cta-box p {
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-            font-size: 1.05rem;
-            position: relative;
-        }
-        .cta-box .btn-primary { position: relative; }
-
-        /* ─── FOOTER ─── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 32px 0;
-            text-align: center;
-        }
-        footer p {
-            color: var(--text-secondary);
-            font-size: 0.82rem;
-        }
-        footer a { color: var(--accent); text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 900px) {
-            .features-grid { grid-template-columns: repeat(2, 1fr); }
-            .sources-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 640px) {
-            .features-grid { grid-template-columns: 1fr; }
-            .sources-grid { grid-template-columns: 1fr; }
-            .stats-bar { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
-            .mobile-toggle { display: block; }
-            .nav-links.active {
-                display: flex; flex-direction: column;
-                position: absolute; top: 64px; left: 0; right: 0;
-                background: rgba(15, 23, 42, 0.95);
-                backdrop-filter: blur(20px);
-                padding: 20px 24px;
-                border-bottom: 1px solid var(--border);
-            }
-            .cta-box { padding: 40px 24px; }
-        }
-
-        /* ─── ANIMATIONS ─── */
-        .fade-up {
-            opacity: 0; transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-    </style>
+/* Mobile */
+@media(max-width:600px){
+  .nav-links{display:none}
+  .input-row{flex-direction:column}
+  .result-header{flex-direction:column;text-align:center}
+  .endpoint-desc{display:none}
+  .endpoint{padding:.6rem .75rem}
+}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-    <div class="nav-inner">
-        <a href="https://threatledger.net" class="logo">
-            <div class="logo-icon">TL</div>
-            ThreatLedger
-        </a>
-        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle menu">☰</button>
-        <ul class="nav-links">
-            <li><a href="#features">功能</a></li>
-            <li><a href="#sources">數據源</a></li>
-            <li><a href="#stats">概覽</a></li>
-            <li><a href="https://threatledger.net" class="nav-cta">進入平台 →</a></li>
-        </ul>
-    </div>
+  <div class="nav-logo">
+    <span class="dot"></span>
+    ThreatLedger
+  </div>
+  <div class="nav-links">
+    <a href="#demo">在线演示</a>
+    <a href="#stats">数据概览</a>
+    <a href="#endpoints">API 端点</a>
+    <a href="https://threatledger.net" target="_blank">文档</a>
+  </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-    <div class="container">
-        <div class="hero-badge">
-            <span class="pulse"></span>
-            AI 驅動 · 每日同步 · 開源情報
-        </div>
-        <h1>加密威脅情報<br><span class="accent">全民共享</span></h1>
-        <p class="subtitle">AI 驅動的加密貨幣威脅分析與情報共享平台</p>
-        <p class="subtitle-en">Crypto Threat Intelligence, Open to All</p>
-        <div class="hero-buttons">
-            <a href="https://threatledger.net" class="btn-primary">進入 ThreatLedger →</a>
-            <a href="#features" class="btn-secondary">了解更多</a>
-        </div>
-
-        <div class="stats-bar fade-up" id="stats">
-            <div class="stat-item">
-                <div class="stat-number">21+</div>
-                <div class="stat-label">API 路由</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">每日</div>
-                <div class="stat-label">數據同步</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">3</div>
-                <div class="stat-label">語言支持</div>
-            </div>
-        </div>
-    </div>
+  <h1>体验 ThreatLedger 威胁情报 API</h1>
+  <p class="sub">区块链地址风险评估 · 威胁情报查询 · 合规筛查</p>
+  <p class="sub-en">Try ThreatLedger API — Blockchain Threat Intelligence Playground</p>
+  <div class="badge-row">
+    <span class="badge">🔍 地址风险评分</span>
+    <span class="badge">🏴‍☠️ 威胁组织识别</span>
+    <span class="badge">📋 OFAC 制裁筛查</span>
+    <span class="badge">🌪️ 混币器检测</span>
+  </div>
 </section>
 
-<!-- FEATURES -->
-<section id="features">
-    <div class="container section-center">
-        <div class="section-label">核心功能</div>
-        <h2 class="section-title">全方位威脅情報能力</h2>
-        <p class="section-desc">從即時監控到深度分析，ThreatLedger 為您提供完整的加密貨幣安全情報工具鏈。</p>
+<section class="demo-section" id="demo">
+  <h2>🧪 交互式演示</h2>
+  <p class="desc">输入一个 ETH/BTC 地址，查看模拟风险评估结果</p>
 
-        <div class="features-grid">
-            <div class="feature-card fade-up">
-                <div class="feature-icon">🔴</div>
-                <h3>即時威脅監控</h3>
-                <p>每日自動同步多個數據源，即時追蹤最新的安全事件、漏洞利用和惡意地址。</p>
-            </div>
-            <div class="feature-card fade-up">
-                <div class="feature-icon">🕵️</div>
-                <h3>黑客檔案數據庫</h3>
-                <p>建立完整的攻擊者畫像，追蹤已知黑客組織的鏈上資金流向與歷史攻擊記錄。</p>
-            </div>
-            <div class="feature-card fade-up">
-                <div class="feature-icon">🔍</div>
-                <h3>智能合約漏洞掃描</h3>
-                <p>分析合約代碼中的常見漏洞模式，包括重入攻擊、閃電貸利用和權限漏洞。</p>
-            </div>
-            <div class="feature-card fade-up">
-                <div class="feature-icon">📊</div>
-                <h3>攻擊模式分析</h3>
-                <p>AI 識別攻擊模式與趨勢，提供可視化分析，幫助安全團隊制定防禦策略。</p>
-            </div>
-            <div class="feature-card fade-up">
-                <div class="feature-icon">🌐</div>
-                <h3>多語言支持</h3>
-                <p>完整支持英文、簡體中文、繁體中文三種語言，服務全球華語及英語社區。</p>
-            </div>
-            <div class="feature-card fade-up">
-                <div class="feature-icon">🤝</div>
-                <h3>開放情報共享</h3>
-                <p>打破情報壁壘，透過開放 API 讓安全研究者和社區共同參與威脅情報建設。</p>
-            </div>
-        </div>
+  <div class="presets">
+    <button class="preset-btn" onclick="tryPreset('0x098b716b8aaf21de9287c6b9e88a5099b88f')">🚨 Lazarus Group</button>
+    <button class="preset-btn" onclick="tryPreset('0x28c6c06298d514db089934071355e5743bf21d60')">🏦 Binance Hot Wallet</button>
+    <button class="preset-btn" onclick="tryPreset('0x722122dF12D4e14e13Ac3b6895a86e84145b6967')">🌪️ Tornado Cash</button>
+    <button class="preset-btn" onclick="tryPreset('0x742d35Cc6634C0532925a3b844Bc9e7595f2BD')">✅ 普通地址</button>
+  </div>
+
+  <div class="input-row">
+    <input type="text" id="addressInput" placeholder="输入 ETH/BTC 地址，例如 0x098b716b8aaf21de..." spellcheck="false">
+    <button class="btn" id="checkBtn" onclick="checkRisk()">🔍 Check Risk</button>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>正在查询 ThreatLedger API...</span>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="risk-ring" id="riskRing">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
+          <circle id="ringCircle" cx="40" cy="40" r="34" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+        </svg>
+        <div class="score-text" id="scoreText">0</div>
+      </div>
+      <div class="result-info">
+        <div class="result-entity" id="entityName">—</div>
+        <span class="result-level" id="riskLevel">—</span>
+        <div class="result-tags" id="resultTags"></div>
+      </div>
     </div>
+    <div style="font-size:.8rem;color:var(--text-dim);border-top:1px solid var(--border);padding-top:.75rem" id="resultSummary"></div>
+  </div>
+
+  <div class="json-block" id="jsonBlock">
+    <div class="json-header">
+      <span>📄 API Response — <code>GET /api/v1/address/risk</code></span>
+      <button onclick="copyJson()">📋 复制</button>
+    </div>
+    <pre id="jsonContent"></pre>
+  </div>
 </section>
 
-<!-- DATA SOURCES -->
-<section id="sources">
-    <div class="container section-center">
-        <div class="section-label">數據來源</div>
-        <h2 class="section-title">多源數據，每日同步</h2>
-        <p class="section-desc">整合全球頂級區塊鏈安全數據源，確保情報的全面性與時效性。</p>
-
-        <div class="sources-grid">
-            <div class="source-card fade-up">
-                <div class="source-icon">🛡️</div>
-                <h4>SlowMist</h4>
-                <p>慢霧科技<br>被盜資產追蹤與黑客檔案</p>
-            </div>
-            <div class="source-card fade-up">
-                <div class="source-icon">⛓️</div>
-                <h4>Etherscan</h4>
-                <p>以太坊區塊鏈<br>鏈上數據與標籤系統</p>
-            </div>
-            <div class="source-card fade-up">
-                <div class="source-icon">🔔</div>
-                <h4>Forta</h4>
-                <p>鏈上威脅檢測網路<br>即時安全警報</p>
-            </div>
-            <div class="source-card fade-up">
-                <div class="source-icon">🏛️</div>
-                <h4>OFAC SDN</h4>
-                <p>美國財政部<br>制裁名單與合規數據</p>
-            </div>
-        </div>
-    </div>
+<section class="stats-section" id="stats">
+  <h2>📊 数据概览</h2>
+  <p class="desc">持续更新的区块链威胁情报数据库</p>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">3,289+</div><div class="stat-label">黑名单地址</div></div>
+    <div class="stat-card"><div class="stat-num">66+</div><div class="stat-label">安全事件追踪</div></div>
+    <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">威胁组织画像</div></div>
+    <div class="stat-card"><div class="stat-num">30</div><div class="stat-label">攻击模式</div></div>
+  </div>
 </section>
 
-<!-- CTA -->
+<section class="endpoints-section" id="endpoints">
+  <h2>🔌 API 端点预览</h2>
+  <p class="desc">RESTful API · JSON 响应 · 毫秒级延迟</p>
+  <div class="endpoint-list">
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/address/risk</span>
+      <span class="endpoint-desc">地址风险评分</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/address/labels</span>
+      <span class="endpoint-desc">地址标签查询</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/incidents</span>
+      <span class="endpoint-desc">安全事件列表</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/incidents/{id}</span>
+      <span class="endpoint-desc">事件详情</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/threat-actors</span>
+      <span class="endpoint-desc">威胁组织列表</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/threat-actors/{id}</span>
+      <span class="endpoint-desc">组织详情 + IoC</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-get">GET</span>
+      <span class="endpoint-path">/api/v1/attack-patterns</span>
+      <span class="endpoint-desc">攻击模式库</span>
+    </div>
+    <div class="endpoint">
+      <span class="method method-post">POST</span>
+      <span class="endpoint-path">/api/v1/address/batch-check</span>
+      <span class="endpoint-desc">批量地址筛查</span>
+    </div>
+  </div>
+</section>
+
 <section class="cta-section">
-    <div class="container">
-        <div class="cta-box fade-up">
-            <h2>開始使用 ThreatLedger</h2>
-            <p>加入加密威脅情報的開放生態，保護您的數字資產安全。</p>
-            <a href="https://threatledger.net" class="btn-primary">訪問 threatledger.net →</a>
-        </div>
-    </div>
+  <h2>开始使用 ThreatLedger API</h2>
+  <p>免费试用 · 即时接入 · 完善文档</p>
+  <div class="cta-buttons">
+    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg">🔑 获取 API Key</button></a>
+    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg btn-outline">📖 查看文档</button></a>
+  </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-    <div class="container">
-        <p>© 2026 <a href="https://threatledger.net">ZeroVector Limited</a> · Hong Kong · All rights reserved.</p>
-    </div>
+  <p>© 2026 ZeroVector Limited · ThreatLedger 威胁情报平台</p>
 </footer>
 
-<!-- Scroll Animation -->
 <script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+const demoData = {
+  lazarus: {
+    entity: "Lazarus Group",
+    riskScore: 98,
+    riskLevel: "CRITICAL",
+    levelClass: "level-critical",
+    color: "#EF4444",
+    tags: ["APT", "DPRK", "OFAC Sanctioned", "State-Sponsored", "Money Laundering"],
+    summary: "该地址与朝鲜关联黑客组织 Lazarus Group 存在强关联。已被 OFAC 列入 SDN 制裁名单。涉及多起大型 DeFi 协议攻击事件，累计窃取资金超 $1.7B。",
+    json: {
+      status: "success",
+      data: {
+        address: "",
+        chain: "ethereum",
+        risk_score: 98,
+        risk_level: "CRITICAL",
+        entity: { name: "Lazarus Group", type: "threat_actor", country: "DPRK" },
+        labels: ["apt", "ofac_sdn", "state_sponsored", "money_laundering"],
+        sanctions: [{ authority: "OFAC", list: "SDN", date_added: "2022-04-14" }],
+        linked_incidents: ["ronin_bridge_2022", "harmony_bridge_2022", "atomic_wallet_2023"],
+        first_seen: "2021-08-15T00:00:00Z",
+        last_active: "2025-12-03T14:22:00Z",
+        confidence: 0.97
+      }
+    }
+  },
+  binance: {
+    entity: "Binance Hot Wallet",
+    riskScore: 5,
+    riskLevel: "CLEAN",
+    levelClass: "level-clean",
+    color: "#22C55E",
+    tags: ["Exchange", "KYC Required", "Licensed", "High Volume"],
+    summary: "该地址属于 Binance 交易所热钱包，为已知合规实体。交易所已在多个司法管辖区获得运营许可，执行 KYC/AML 流程。",
+    json: {
+      status: "success",
+      data: {
+        address: "",
+        chain: "ethereum",
+        risk_score: 5,
+        risk_level: "CLEAN",
+        entity: { name: "Binance", type: "exchange", country: "Global" },
+        labels: ["exchange", "kyc_required", "licensed"],
+        sanctions: [],
+        linked_incidents: [],
+        first_seen: "2019-03-01T00:00:00Z",
+        last_active: "2026-03-22T09:15:00Z",
+        confidence: 0.99
+      }
+    }
+  },
+  tornado: {
+    entity: "Tornado Cash (Router)",
+    riskScore: 82,
+    riskLevel: "HIGH",
+    levelClass: "level-high",
+    color: "#F59E0B",
+    tags: ["Mixer", "OFAC Sanctioned", "Privacy Protocol", "Obfuscation"],
+    summary: "该地址为 Tornado Cash 混币器合约。已被 OFAC 制裁。大量非法资金通过此协议进行清洗和混淆，被多国监管机构标记为高风险。",
+    json: {
+      status: "success",
+      data: {
+        address: "",
+        chain: "ethereum",
+        risk_score: 82,
+        risk_level: "HIGH",
+        entity: { name: "Tornado Cash", type: "mixer", country: null },
+        labels: ["mixer", "ofac_sdn", "privacy_protocol", "obfuscation"],
+        sanctions: [{ authority: "OFAC", list: "SDN", date_added: "2022-08-08" }],
+        linked_incidents: ["tornado_cash_sanction_2022"],
+        first_seen: "2019-12-16T00:00:00Z",
+        last_active: "2026-03-20T18:45:00Z",
+        confidence: 0.95
+      }
+    }
+  },
+  clean: {
+    entity: "未知地址",
+    riskScore: 0,
+    riskLevel: "CLEAN",
+    levelClass: "level-clean",
+    color: "#22C55E",
+    tags: ["No Known Risk", "Untagged"],
+    summary: "该地址未在 ThreatLedger 数据库中发现已知风险信号。不在任何制裁名单中，未与已知威胁组织关联。",
+    json: {
+      status: "success",
+      data: {
+        address: "",
+        chain: "ethereum",
+        risk_score: 0,
+        risk_level: "CLEAN",
+        entity: null,
+        labels: [],
+        sanctions: [],
+        linked_incidents: [],
+        first_seen: null,
+        last_active: null,
+        confidence: null
+      }
+    }
+  }
+};
 
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+function tryPreset(addr) {
+  document.getElementById('addressInput').value = addr;
+  checkRisk();
+}
+
+function checkRisk() {
+  const addr = document.getElementById('addressInput').value.trim();
+  if (!addr) { document.getElementById('addressInput').focus(); return; }
+
+  // Hide previous results, show loading
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('jsonBlock').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  // Determine which dataset
+  let data;
+  if (addr.toLowerCase().includes('098b716')) data = demoData.lazarus;
+  else if (addr.toLowerCase().includes('28c6c06')) data = demoData.binance;
+  else if (addr.toLowerCase().includes('722122')) data = demoData.tornado;
+  else data = demoData.clean;
+
+  // Clone json and set address
+  const jsonData = JSON.parse(JSON.stringify(data.json));
+  jsonData.data.address = addr;
+
+  setTimeout(() => {
+    document.getElementById('loading').style.display = 'none';
+    showResult(data, addr, jsonData);
+  }, 800);
+}
+
+function showResult(data, addr, jsonData) {
+  const card = document.getElementById('resultCard');
+  const jsonBlock = document.getElementById('jsonBlock');
+
+  // Score ring animation
+  const circle = document.getElementById('ringCircle');
+  const circumference = 2 * Math.PI * 34;
+  const offset = circumference - (data.riskScore / 100) * circumference;
+  circle.style.stroke = data.color;
+  circle.style.transition = 'stroke-dashoffset 1s ease';
+  circle.style.strokeDashoffset = circumference;
+  requestAnimationFrame(() => { circle.style.strokeDashoffset = offset; });
+
+  // Score text counter
+  const scoreEl = document.getElementById('scoreText');
+  scoreEl.style.color = data.color;
+  animateCount(scoreEl, 0, data.riskScore, 800);
+
+  // Info
+  document.getElementById('entityName').textContent = data.entity;
+  const levelEl = document.getElementById('riskLevel');
+  levelEl.textContent = data.riskLevel;
+  levelEl.className = 'result-level ' + data.levelClass;
+
+  // Tags
+  const tagsEl = document.getElementById('resultTags');
+  tagsEl.innerHTML = data.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  // Summary
+  document.getElementById('resultSummary').textContent = data.summary;
+
+  card.style.display = 'block';
+
+  // JSON
+  document.getElementById('jsonContent').innerHTML = syntaxHighlight(JSON.stringify(jsonData, null, 2));
+  jsonBlock.style.display = 'block';
+}
+
+function animateCount(el, from, to, duration) {
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    el.textContent = Math.round(from + (to - from) * easeOut(p));
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+function syntaxHighlight(json) {
+  return json.replace(/("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")\s*:/g, '<span class="k">$1</span>:')
+    .replace(/: ("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")/g, ': <span class="s">$1</span>')
+    .replace(/: (-?\d+\.?\d*)/g, ': <span class="n">$1</span>')
+    .replace(/: (true|false|null)/g, ': <span class="b">$1</span>');
+}
+
+function copyJson() {
+  const text = document.getElementById('jsonContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.json-header button');
+    btn.textContent = '✅ 已复制';
+    setTimeout(() => btn.textContent = '📋 复制', 1500);
+  });
+}
+
+// Enter key
+document.getElementById('addressInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkRisk();
+});
 </script>
 
 </body>
