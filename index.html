@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ThreatLedger — 威胁情报 API Playground</title>
+<meta name="description" content="ThreatLedger 区块链威胁情报 API — 地址风险评估、威胁组织识别、OFAC 制裁筛查、混币器检测">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -17,9 +18,16 @@ a:hover{opacity:.8}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.15rem;color:var(--text)}
 .nav-logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
-.nav-links{display:flex;gap:1.5rem;font-size:.875rem;color:var(--text-dim)}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem;color:var(--text-dim);align-items:center}
 .nav-links a{color:var(--text-dim)}
 .nav-links a:hover{color:var(--text)}
+
+/* Language Toggle */
+.lang-toggle{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.3rem .7rem;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap;margin-left:.5rem}
+.lang-toggle:hover{background:var(--accent-glow);color:var(--text)}
+/* Mobile lang toggle */
+.lang-toggle-mobile{display:none;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.3rem .6rem;border-radius:8px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s}
+.lang-toggle-mobile:hover{background:var(--accent-glow)}
 
 /* Sections */
 section{padding:6rem 1.5rem 4rem;max-width:960px;margin:0 auto}
@@ -114,6 +122,7 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:v
 /* Mobile */
 @media(max-width:600px){
   .nav-links{display:none}
+  .lang-toggle-mobile{display:inline-block}
   .input-row{flex-direction:column}
   .result-header{flex-direction:column;text-align:center}
   .endpoint-desc{display:none}
@@ -129,44 +138,46 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:v
     ThreatLedger
   </div>
   <div class="nav-links">
-    <a href="#demo">在线演示</a>
-    <a href="#stats">数据概览</a>
-    <a href="#endpoints">API 端点</a>
-    <a href="https://threatledger.net" target="_blank">文档</a>
+    <a href="#demo" data-i18n="nav.demo">在线演示</a>
+    <a href="#stats" data-i18n="nav.stats">数据概览</a>
+    <a href="#endpoints" data-i18n="nav.endpoints">API 端点</a>
+    <a href="https://threatledger.net" target="_blank" data-i18n="nav.docs">文档</a>
+    <button class="lang-toggle" onclick="cycleLang()" id="langBtn">EN</button>
   </div>
+  <button class="lang-toggle-mobile" onclick="cycleLang()" id="langBtnMobile">EN</button>
 </nav>
 
 <section class="hero">
-  <h1>体验 ThreatLedger 威胁情报 API</h1>
-  <p class="sub">区块链地址风险评估 · 威胁情报查询 · 合规筛查</p>
-  <p class="sub-en">Try ThreatLedger API — Blockchain Threat Intelligence Playground</p>
+  <h1 data-i18n="hero.title">体验 ThreatLedger 威胁情报 API</h1>
+  <p class="sub" data-i18n="hero.sub">区块链地址风险评估 · 威胁情报查询 · 合规筛查</p>
+  <p class="sub-en" data-i18n="hero.subEn">Try ThreatLedger API — Blockchain Threat Intelligence Playground</p>
   <div class="badge-row">
-    <span class="badge">🔍 地址风险评分</span>
-    <span class="badge">🏴‍☠️ 威胁组织识别</span>
-    <span class="badge">📋 OFAC 制裁筛查</span>
-    <span class="badge">🌪️ 混币器检测</span>
+    <span class="badge" data-i18n="hero.badge1">🔍 地址风险评分</span>
+    <span class="badge" data-i18n="hero.badge2">🏴‍☠️ 威胁组织识别</span>
+    <span class="badge" data-i18n="hero.badge3">📋 OFAC 制裁筛查</span>
+    <span class="badge" data-i18n="hero.badge4">🌪️ 混币器检测</span>
   </div>
 </section>
 
 <section class="demo-section" id="demo">
-  <h2>🧪 交互式演示</h2>
-  <p class="desc">输入一个 ETH/BTC 地址，查看模拟风险评估结果</p>
+  <h2 data-i18n="demo.title">🧪 交互式演示</h2>
+  <p class="desc" data-i18n="demo.desc">输入一个 ETH/BTC 地址，查看模拟风险评估结果</p>
 
   <div class="presets">
     <button class="preset-btn" onclick="tryPreset('0x098b716b8aaf21de9287c6b9e88a5099b88f')">🚨 Lazarus Group</button>
     <button class="preset-btn" onclick="tryPreset('0x28c6c06298d514db089934071355e5743bf21d60')">🏦 Binance Hot Wallet</button>
     <button class="preset-btn" onclick="tryPreset('0x722122dF12D4e14e13Ac3b6895a86e84145b6967')">🌪️ Tornado Cash</button>
-    <button class="preset-btn" onclick="tryPreset('0x742d35Cc6634C0532925a3b844Bc9e7595f2BD')">✅ 普通地址</button>
+    <button class="preset-btn" onclick="tryPreset('0x742d35Cc6634C0532925a3b844Bc9e7595f2BD')" data-i18n="demo.presetClean">✅ 普通地址</button>
   </div>
 
   <div class="input-row">
-    <input type="text" id="addressInput" placeholder="输入 ETH/BTC 地址，例如 0x098b716b8aaf21de..." spellcheck="false">
+    <input type="text" id="addressInput" data-i18n-placeholder="demo.placeholder" placeholder="输入 ETH/BTC 地址，例如 0x098b716b8aaf21de..." spellcheck="false">
     <button class="btn" id="checkBtn" onclick="checkRisk()">🔍 Check Risk</button>
   </div>
 
   <div class="loading" id="loading">
     <div class="spinner"></div>
-    <span>正在查询 ThreatLedger API...</span>
+    <span data-i18n="demo.loading">正在查询 ThreatLedger API...</span>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -190,182 +201,297 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:v
   <div class="json-block" id="jsonBlock">
     <div class="json-header">
       <span>📄 API Response — <code>GET /api/v1/address/risk</code></span>
-      <button onclick="copyJson()">📋 复制</button>
+      <button onclick="copyJson()" id="copyBtn" data-i18n="demo.copy">📋 复制</button>
     </div>
     <pre id="jsonContent"></pre>
   </div>
 </section>
 
 <section class="stats-section" id="stats">
-  <h2>📊 数据概览</h2>
-  <p class="desc">持续更新的区块链威胁情报数据库</p>
+  <h2 data-i18n="stats.title">📊 数据概览</h2>
+  <p class="desc" data-i18n="stats.desc">持续更新的区块链威胁情报数据库</p>
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-num">3,289+</div><div class="stat-label">黑名单地址</div></div>
-    <div class="stat-card"><div class="stat-num">66+</div><div class="stat-label">安全事件追踪</div></div>
-    <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">威胁组织画像</div></div>
-    <div class="stat-card"><div class="stat-num">30</div><div class="stat-label">攻击模式</div></div>
+    <div class="stat-card"><div class="stat-num">3,289+</div><div class="stat-label" data-i18n="stats.blacklist">黑名单地址</div></div>
+    <div class="stat-card"><div class="stat-num">66+</div><div class="stat-label" data-i18n="stats.incidents">安全事件追踪</div></div>
+    <div class="stat-card"><div class="stat-num">6</div><div class="stat-label" data-i18n="stats.actors">威胁组织画像</div></div>
+    <div class="stat-card"><div class="stat-num">30</div><div class="stat-label" data-i18n="stats.patterns">攻击模式</div></div>
   </div>
 </section>
 
 <section class="endpoints-section" id="endpoints">
-  <h2>🔌 API 端点预览</h2>
-  <p class="desc">RESTful API · JSON 响应 · 毫秒级延迟</p>
+  <h2 data-i18n="ep.title">🔌 API 端点预览</h2>
+  <p class="desc" data-i18n="ep.desc">RESTful API · JSON 响应 · 毫秒级延迟</p>
   <div class="endpoint-list">
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/address/risk</span>
-      <span class="endpoint-desc">地址风险评分</span>
+      <span class="endpoint-desc" data-i18n="ep.risk">地址风险评分</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/address/labels</span>
-      <span class="endpoint-desc">地址标签查询</span>
+      <span class="endpoint-desc" data-i18n="ep.labels">地址标签查询</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/incidents</span>
-      <span class="endpoint-desc">安全事件列表</span>
+      <span class="endpoint-desc" data-i18n="ep.incidents">安全事件列表</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/incidents/{id}</span>
-      <span class="endpoint-desc">事件详情</span>
+      <span class="endpoint-desc" data-i18n="ep.incidentDetail">事件详情</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/threat-actors</span>
-      <span class="endpoint-desc">威胁组织列表</span>
+      <span class="endpoint-desc" data-i18n="ep.actors">威胁组织列表</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/threat-actors/{id}</span>
-      <span class="endpoint-desc">组织详情 + IoC</span>
+      <span class="endpoint-desc" data-i18n="ep.actorDetail">组织详情 + IoC</span>
     </div>
     <div class="endpoint">
       <span class="method method-get">GET</span>
       <span class="endpoint-path">/api/v1/attack-patterns</span>
-      <span class="endpoint-desc">攻击模式库</span>
+      <span class="endpoint-desc" data-i18n="ep.patterns">攻击模式库</span>
     </div>
     <div class="endpoint">
       <span class="method method-post">POST</span>
       <span class="endpoint-path">/api/v1/address/batch-check</span>
-      <span class="endpoint-desc">批量地址筛查</span>
+      <span class="endpoint-desc" data-i18n="ep.batch">批量地址筛查</span>
     </div>
   </div>
 </section>
 
 <section class="cta-section">
-  <h2>开始使用 ThreatLedger API</h2>
-  <p>免费试用 · 即时接入 · 完善文档</p>
+  <h2 data-i18n="cta.title">开始使用 ThreatLedger API</h2>
+  <p data-i18n="cta.sub">免费试用 · 即时接入 · 完善文档</p>
   <div class="cta-buttons">
-    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg">🔑 获取 API Key</button></a>
-    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg btn-outline">📖 查看文档</button></a>
+    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg" data-i18n="cta.getKey">🔑 获取 API Key</button></a>
+    <a href="https://threatledger.net" target="_blank"><button class="btn btn-lg btn-outline" data-i18n="cta.viewDocs">📖 查看文档</button></a>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 ZeroVector Limited · ThreatLedger 威胁情报平台</p>
+  <p data-i18n="footer.text">© 2026 ZeroVector Limited · ThreatLedger 威胁情报平台</p>
 </footer>
 
 <script>
-const demoData = {
+// ============================================================
+// i18n — Tri-lingual support (简中 / 繁中 / EN)
+// ============================================================
+const I18N = {
+  'zh-cn': {
+    _meta: { title: 'ThreatLedger — 威胁情报 API Playground', description: 'ThreatLedger 区块链威胁情报 API — 地址风险评估、威胁组织识别、OFAC 制裁筛查、混币器检测', label: '简中', htmlLang: 'zh-CN' },
+    'nav.demo': '在线演示', 'nav.stats': '数据概览', 'nav.endpoints': 'API 端点', 'nav.docs': '文档',
+    'hero.title': '体验 ThreatLedger 威胁情报 API',
+    'hero.sub': '区块链地址风险评估 · 威胁情报查询 · 合规筛查',
+    'hero.subEn': 'Try ThreatLedger API — Blockchain Threat Intelligence Playground',
+    'hero.badge1': '🔍 地址风险评分', 'hero.badge2': '🏴‍☠️ 威胁组织识别', 'hero.badge3': '📋 OFAC 制裁筛查', 'hero.badge4': '🌪️ 混币器检测',
+    'demo.title': '🧪 交互式演示',
+    'demo.desc': '输入一个 ETH/BTC 地址，查看模拟风险评估结果',
+    'demo.presetClean': '✅ 普通地址',
+    'demo.placeholder': '输入 ETH/BTC 地址，例如 0x098b716b8aaf21de...',
+    'demo.loading': '正在查询 ThreatLedger API...',
+    'demo.copy': '📋 复制', 'demo.copied': '✅ 已复制',
+    'stats.title': '📊 数据概览', 'stats.desc': '持续更新的区块链威胁情报数据库',
+    'stats.blacklist': '黑名单地址', 'stats.incidents': '安全事件追踪', 'stats.actors': '威胁组织画像', 'stats.patterns': '攻击模式',
+    'ep.title': '🔌 API 端点预览', 'ep.desc': 'RESTful API · JSON 响应 · 毫秒级延迟',
+    'ep.risk': '地址风险评分', 'ep.labels': '地址标签查询', 'ep.incidents': '安全事件列表', 'ep.incidentDetail': '事件详情',
+    'ep.actors': '威胁组织列表', 'ep.actorDetail': '组织详情 + IoC', 'ep.patterns': '攻击模式库', 'ep.batch': '批量地址筛查',
+    'cta.title': '开始使用 ThreatLedger API', 'cta.sub': '免费试用 · 即时接入 · 完善文档',
+    'cta.getKey': '🔑 获取 API Key', 'cta.viewDocs': '📖 查看文档',
+    'footer.text': '© 2026 ZeroVector Limited · ThreatLedger 威胁情报平台'
+  },
+  'zh-tw': {
+    _meta: { title: 'ThreatLedger — 威脅情報 API Playground', description: 'ThreatLedger 區塊鏈威脅情報 API — 地址風險評估、威脅組織識別、OFAC 制裁篩查、混幣器檢測', label: '繁中', htmlLang: 'zh-TW' },
+    'nav.demo': '線上演示', 'nav.stats': '數據概覽', 'nav.endpoints': 'API 端點', 'nav.docs': '文檔',
+    'hero.title': '體驗 ThreatLedger 威脅情報 API',
+    'hero.sub': '區塊鏈地址風險評估 · 威脅情報查詢 · 合規篩查',
+    'hero.subEn': 'Try ThreatLedger API — Blockchain Threat Intelligence Playground',
+    'hero.badge1': '🔍 地址風險評分', 'hero.badge2': '🏴‍☠️ 威脅組織識別', 'hero.badge3': '📋 OFAC 制裁篩查', 'hero.badge4': '🌪️ 混幣器檢測',
+    'demo.title': '🧪 互動式演示',
+    'demo.desc': '輸入一個 ETH/BTC 地址，查看模擬風險評估結果',
+    'demo.presetClean': '✅ 普通地址',
+    'demo.placeholder': '輸入 ETH/BTC 地址，例如 0x098b716b8aaf21de...',
+    'demo.loading': '正在查詢 ThreatLedger API...',
+    'demo.copy': '📋 複製', 'demo.copied': '✅ 已複製',
+    'stats.title': '📊 數據概覽', 'stats.desc': '持續更新的區塊鏈威脅情報資料庫',
+    'stats.blacklist': '黑名單地址', 'stats.incidents': '安全事件追蹤', 'stats.actors': '威脅組織畫像', 'stats.patterns': '攻擊模式',
+    'ep.title': '🔌 API 端點預覽', 'ep.desc': 'RESTful API · JSON 回應 · 毫秒級延遲',
+    'ep.risk': '地址風險評分', 'ep.labels': '地址標籤查詢', 'ep.incidents': '安全事件列表', 'ep.incidentDetail': '事件詳情',
+    'ep.actors': '威脅組織列表', 'ep.actorDetail': '組織詳情 + IoC', 'ep.patterns': '攻擊模式庫', 'ep.batch': '批次地址篩查',
+    'cta.title': '開始使用 ThreatLedger API', 'cta.sub': '免費試用 · 即時接入 · 完善文檔',
+    'cta.getKey': '🔑 取得 API Key', 'cta.viewDocs': '📖 查看文檔',
+    'footer.text': '© 2026 ZeroVector Limited · ThreatLedger 威脅情報平台'
+  },
+  'en': {
+    _meta: { title: 'ThreatLedger — Threat Intelligence API Playground', description: 'ThreatLedger Blockchain Threat Intelligence API — Address risk scoring, threat actor identification, OFAC sanctions screening, mixer detection', label: 'EN', htmlLang: 'en' },
+    'nav.demo': 'Demo', 'nav.stats': 'Overview', 'nav.endpoints': 'Endpoints', 'nav.docs': 'Docs',
+    'hero.title': 'Experience ThreatLedger Threat Intelligence API',
+    'hero.sub': 'Blockchain Address Risk Scoring · Threat Intelligence · Compliance Screening',
+    'hero.subEn': 'Try ThreatLedger API — Blockchain Threat Intelligence Playground',
+    'hero.badge1': '🔍 Address Risk Scoring', 'hero.badge2': '🏴‍☠️ Threat Actor ID', 'hero.badge3': '📋 OFAC Screening', 'hero.badge4': '🌪️ Mixer Detection',
+    'demo.title': '🧪 Interactive Demo',
+    'demo.desc': 'Enter an ETH/BTC address to see a simulated risk assessment',
+    'demo.presetClean': '✅ Clean Address',
+    'demo.placeholder': 'Enter ETH/BTC address, e.g. 0x098b716b8aaf21de...',
+    'demo.loading': 'Querying ThreatLedger API...',
+    'demo.copy': '📋 Copy', 'demo.copied': '✅ Copied',
+    'stats.title': '📊 Data Overview', 'stats.desc': 'Continuously updated blockchain threat intelligence database',
+    'stats.blacklist': 'Blacklisted Addresses', 'stats.incidents': 'Tracked Incidents', 'stats.actors': 'Threat Actor Profiles', 'stats.patterns': 'Attack Patterns',
+    'ep.title': '🔌 API Endpoints', 'ep.desc': 'RESTful API · JSON Response · Sub-millisecond Latency',
+    'ep.risk': 'Address Risk Score', 'ep.labels': 'Address Labels', 'ep.incidents': 'Incident List', 'ep.incidentDetail': 'Incident Details',
+    'ep.actors': 'Threat Actor List', 'ep.actorDetail': 'Actor Details + IoC', 'ep.patterns': 'Attack Patterns', 'ep.batch': 'Batch Address Check',
+    'cta.title': 'Get Started with ThreatLedger API', 'cta.sub': 'Free Trial · Instant Access · Full Documentation',
+    'cta.getKey': '🔑 Get API Key', 'cta.viewDocs': '📖 View Docs',
+    'footer.text': '© 2026 ZeroVector Limited · ThreatLedger Threat Intelligence Platform'
+  }
+};
+
+// Language cycle order: EN → 简中 → 繁中 → EN
+const LANG_CYCLE = ['en', 'zh-cn', 'zh-tw'];
+// Next lang label map (shows what you'll switch TO)
+const NEXT_LABEL = { 'en': '简中', 'zh-cn': '繁中', 'zh-tw': 'EN' };
+
+let currentLang = 'zh-cn';
+
+function detectLang() {
+  const saved = localStorage.getItem('tl-lang');
+  if (saved && I18N[saved]) return saved;
+  const nav = (navigator.language || '').toLowerCase();
+  if (/^zh-(tw|hk|mo)/.test(nav)) return 'zh-tw';
+  if (/^zh/.test(nav)) return 'zh-cn';
+  return 'en';
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('tl-lang', lang);
+  const strings = I18N[lang];
+  if (!strings) return;
+
+  // Update html lang attribute
+  document.documentElement.lang = strings._meta.htmlLang;
+
+  // Update title and meta description
+  document.title = strings._meta.title;
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', strings._meta.description);
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (strings[key] !== undefined) el.textContent = strings[key];
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (strings[key] !== undefined) el.placeholder = strings[key];
+  });
+
+  // Hide/show sub-en line based on language
+  const subEn = document.querySelector('.hero .sub-en');
+  if (subEn) {
+    subEn.style.display = (lang === 'en') ? 'none' : '';
+  }
+
+  // Update toggle button text (show next language)
+  const nextLabel = NEXT_LABEL[lang] || 'EN';
+  document.getElementById('langBtn').textContent = nextLabel;
+  document.getElementById('langBtnMobile').textContent = nextLabel;
+}
+
+function cycleLang() {
+  const idx = LANG_CYCLE.indexOf(currentLang);
+  const next = LANG_CYCLE[(idx + 1) % LANG_CYCLE.length];
+  applyLang(next);
+}
+
+// ============================================================
+// Demo Data (with i18n summaries and entity names)
+// ============================================================
+const demoDataI18n = {
   lazarus: {
-    entity: "Lazarus Group",
-    riskScore: 98,
-    riskLevel: "CRITICAL",
-    levelClass: "level-critical",
-    color: "#EF4444",
-    tags: ["APT", "DPRK", "OFAC Sanctioned", "State-Sponsored", "Money Laundering"],
-    summary: "该地址与朝鲜关联黑客组织 Lazarus Group 存在强关联。已被 OFAC 列入 SDN 制裁名单。涉及多起大型 DeFi 协议攻击事件，累计窃取资金超 $1.7B。",
+    entity: { 'zh-cn': 'Lazarus Group', 'zh-tw': 'Lazarus Group', 'en': 'Lazarus Group' },
+    riskScore: 98, riskLevel: 'CRITICAL', levelClass: 'level-critical', color: '#EF4444',
+    tags: ['APT', 'DPRK', 'OFAC Sanctioned', 'State-Sponsored', 'Money Laundering'],
+    summary: {
+      'zh-cn': '该地址与朝鲜关联黑客组织 Lazarus Group 存在强关联。已被 OFAC 列入 SDN 制裁名单。涉及多起大型 DeFi 协议攻击事件，累计窃取资金超 $1.7B。',
+      'zh-tw': '該地址與北韓關聯駭客組織 Lazarus Group 存在強關聯。已被 OFAC 列入 SDN 制裁名單。涉及多起大型 DeFi 協議攻擊事件，累計竊取資金超 $1.7B。',
+      'en': 'This address is strongly linked to Lazarus Group, a DPRK-affiliated hacking organization. Listed on the OFAC SDN sanctions list. Involved in multiple major DeFi protocol attacks with over $1.7B in stolen funds.'
+    },
     json: {
-      status: "success",
+      status: 'success',
       data: {
-        address: "",
-        chain: "ethereum",
-        risk_score: 98,
-        risk_level: "CRITICAL",
-        entity: { name: "Lazarus Group", type: "threat_actor", country: "DPRK" },
-        labels: ["apt", "ofac_sdn", "state_sponsored", "money_laundering"],
-        sanctions: [{ authority: "OFAC", list: "SDN", date_added: "2022-04-14" }],
-        linked_incidents: ["ronin_bridge_2022", "harmony_bridge_2022", "atomic_wallet_2023"],
-        first_seen: "2021-08-15T00:00:00Z",
-        last_active: "2025-12-03T14:22:00Z",
-        confidence: 0.97
+        address: '', chain: 'ethereum', risk_score: 98, risk_level: 'CRITICAL',
+        entity: { name: 'Lazarus Group', type: 'threat_actor', country: 'DPRK' },
+        labels: ['apt', 'ofac_sdn', 'state_sponsored', 'money_laundering'],
+        sanctions: [{ authority: 'OFAC', list: 'SDN', date_added: '2022-04-14' }],
+        linked_incidents: ['ronin_bridge_2022', 'harmony_bridge_2022', 'atomic_wallet_2023'],
+        first_seen: '2021-08-15T00:00:00Z', last_active: '2025-12-03T14:22:00Z', confidence: 0.97
       }
     }
   },
   binance: {
-    entity: "Binance Hot Wallet",
-    riskScore: 5,
-    riskLevel: "CLEAN",
-    levelClass: "level-clean",
-    color: "#22C55E",
-    tags: ["Exchange", "KYC Required", "Licensed", "High Volume"],
-    summary: "该地址属于 Binance 交易所热钱包，为已知合规实体。交易所已在多个司法管辖区获得运营许可，执行 KYC/AML 流程。",
+    entity: { 'zh-cn': 'Binance Hot Wallet', 'zh-tw': 'Binance Hot Wallet', 'en': 'Binance Hot Wallet' },
+    riskScore: 5, riskLevel: 'CLEAN', levelClass: 'level-clean', color: '#22C55E',
+    tags: ['Exchange', 'KYC Required', 'Licensed', 'High Volume'],
+    summary: {
+      'zh-cn': '该地址属于 Binance 交易所热钱包，为已知合规实体。交易所已在多个司法管辖区获得运营许可，执行 KYC/AML 流程。',
+      'zh-tw': '該地址屬於 Binance 交易所熱錢包，為已知合規實體。交易所已在多個司法管轄區獲得營運許可，執行 KYC/AML 流程。',
+      'en': 'This address belongs to a Binance exchange hot wallet, a known compliant entity. The exchange is licensed in multiple jurisdictions and enforces KYC/AML procedures.'
+    },
     json: {
-      status: "success",
+      status: 'success',
       data: {
-        address: "",
-        chain: "ethereum",
-        risk_score: 5,
-        risk_level: "CLEAN",
-        entity: { name: "Binance", type: "exchange", country: "Global" },
-        labels: ["exchange", "kyc_required", "licensed"],
-        sanctions: [],
-        linked_incidents: [],
-        first_seen: "2019-03-01T00:00:00Z",
-        last_active: "2026-03-22T09:15:00Z",
-        confidence: 0.99
+        address: '', chain: 'ethereum', risk_score: 5, risk_level: 'CLEAN',
+        entity: { name: 'Binance', type: 'exchange', country: 'Global' },
+        labels: ['exchange', 'kyc_required', 'licensed'],
+        sanctions: [], linked_incidents: [],
+        first_seen: '2019-03-01T00:00:00Z', last_active: '2026-03-22T09:15:00Z', confidence: 0.99
       }
     }
   },
   tornado: {
-    entity: "Tornado Cash (Router)",
-    riskScore: 82,
-    riskLevel: "HIGH",
-    levelClass: "level-high",
-    color: "#F59E0B",
-    tags: ["Mixer", "OFAC Sanctioned", "Privacy Protocol", "Obfuscation"],
-    summary: "该地址为 Tornado Cash 混币器合约。已被 OFAC 制裁。大量非法资金通过此协议进行清洗和混淆，被多国监管机构标记为高风险。",
+    entity: { 'zh-cn': 'Tornado Cash (Router)', 'zh-tw': 'Tornado Cash (Router)', 'en': 'Tornado Cash (Router)' },
+    riskScore: 82, riskLevel: 'HIGH', levelClass: 'level-high', color: '#F59E0B',
+    tags: ['Mixer', 'OFAC Sanctioned', 'Privacy Protocol', 'Obfuscation'],
+    summary: {
+      'zh-cn': '该地址为 Tornado Cash 混币器合约。已被 OFAC 制裁。大量非法资金通过此协议进行清洗和混淆，被多国监管机构标记为高风险。',
+      'zh-tw': '該地址為 Tornado Cash 混幣器合約。已被 OFAC 制裁。大量非法資金透過此協議進行清洗和混淆，被多國監管機構標記為高風險。',
+      'en': 'This address is a Tornado Cash mixer contract. Sanctioned by OFAC. Significant illicit funds have been laundered through this protocol, flagged as high-risk by regulators in multiple countries.'
+    },
     json: {
-      status: "success",
+      status: 'success',
       data: {
-        address: "",
-        chain: "ethereum",
-        risk_score: 82,
-        risk_level: "HIGH",
-        entity: { name: "Tornado Cash", type: "mixer", country: null },
-        labels: ["mixer", "ofac_sdn", "privacy_protocol", "obfuscation"],
-        sanctions: [{ authority: "OFAC", list: "SDN", date_added: "2022-08-08" }],
-        linked_incidents: ["tornado_cash_sanction_2022"],
-        first_seen: "2019-12-16T00:00:00Z",
-        last_active: "2026-03-20T18:45:00Z",
-        confidence: 0.95
+        address: '', chain: 'ethereum', risk_score: 82, risk_level: 'HIGH',
+        entity: { name: 'Tornado Cash', type: 'mixer', country: null },
+        labels: ['mixer', 'ofac_sdn', 'privacy_protocol', 'obfuscation'],
+        sanctions: [{ authority: 'OFAC', list: 'SDN', date_added: '2022-08-08' }],
+        linked_incidents: ['tornado_cash_sanction_2022'],
+        first_seen: '2019-12-16T00:00:00Z', last_active: '2026-03-20T18:45:00Z', confidence: 0.95
       }
     }
   },
   clean: {
-    entity: "未知地址",
-    riskScore: 0,
-    riskLevel: "CLEAN",
-    levelClass: "level-clean",
-    color: "#22C55E",
-    tags: ["No Known Risk", "Untagged"],
-    summary: "该地址未在 ThreatLedger 数据库中发现已知风险信号。不在任何制裁名单中，未与已知威胁组织关联。",
+    entity: { 'zh-cn': '未知地址', 'zh-tw': '未知地址', 'en': 'Unknown Address' },
+    riskScore: 0, riskLevel: 'CLEAN', levelClass: 'level-clean', color: '#22C55E',
+    tags: ['No Known Risk', 'Untagged'],
+    summary: {
+      'zh-cn': '该地址未在 ThreatLedger 数据库中发现已知风险信号。不在任何制裁名单中，未与已知威胁组织关联。',
+      'zh-tw': '該地址未在 ThreatLedger 資料庫中發現已知風險訊號。不在任何制裁名單中，未與已知威脅組織關聯。',
+      'en': 'No known risk signals found for this address in the ThreatLedger database. Not on any sanctions list and not linked to any known threat actors.'
+    },
     json: {
-      status: "success",
+      status: 'success',
       data: {
-        address: "",
-        chain: "ethereum",
-        risk_score: 0,
-        risk_level: "CLEAN",
-        entity: null,
-        labels: [],
-        sanctions: [],
-        linked_incidents: [],
-        first_seen: null,
-        last_active: null,
-        confidence: null
+        address: '', chain: 'ethereum', risk_score: 0, risk_level: 'CLEAN',
+        entity: null, labels: [], sanctions: [], linked_incidents: [],
+        first_seen: null, last_active: null, confidence: null
       }
     }
   }
@@ -380,19 +506,16 @@ function checkRisk() {
   const addr = document.getElementById('addressInput').value.trim();
   if (!addr) { document.getElementById('addressInput').focus(); return; }
 
-  // Hide previous results, show loading
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('jsonBlock').style.display = 'none';
   document.getElementById('loading').style.display = 'block';
 
-  // Determine which dataset
   let data;
-  if (addr.toLowerCase().includes('098b716')) data = demoData.lazarus;
-  else if (addr.toLowerCase().includes('28c6c06')) data = demoData.binance;
-  else if (addr.toLowerCase().includes('722122')) data = demoData.tornado;
-  else data = demoData.clean;
+  if (addr.toLowerCase().includes('098b716')) data = demoDataI18n.lazarus;
+  else if (addr.toLowerCase().includes('28c6c06')) data = demoDataI18n.binance;
+  else if (addr.toLowerCase().includes('722122')) data = demoDataI18n.tornado;
+  else data = demoDataI18n.clean;
 
-  // Clone json and set address
   const jsonData = JSON.parse(JSON.stringify(data.json));
   jsonData.data.address = addr;
 
@@ -406,7 +529,6 @@ function showResult(data, addr, jsonData) {
   const card = document.getElementById('resultCard');
   const jsonBlock = document.getElementById('jsonBlock');
 
-  // Score ring animation
   const circle = document.getElementById('ringCircle');
   const circumference = 2 * Math.PI * 34;
   const offset = circumference - (data.riskScore / 100) * circumference;
@@ -415,27 +537,24 @@ function showResult(data, addr, jsonData) {
   circle.style.strokeDashoffset = circumference;
   requestAnimationFrame(() => { circle.style.strokeDashoffset = offset; });
 
-  // Score text counter
   const scoreEl = document.getElementById('scoreText');
   scoreEl.style.color = data.color;
   animateCount(scoreEl, 0, data.riskScore, 800);
 
-  // Info
-  document.getElementById('entityName').textContent = data.entity;
+  // Use i18n entity name
+  document.getElementById('entityName').textContent = data.entity[currentLang] || data.entity['en'];
   const levelEl = document.getElementById('riskLevel');
   levelEl.textContent = data.riskLevel;
   levelEl.className = 'result-level ' + data.levelClass;
 
-  // Tags
   const tagsEl = document.getElementById('resultTags');
   tagsEl.innerHTML = data.tags.map(t => `<span class="tag">${t}</span>`).join('');
 
-  // Summary
-  document.getElementById('resultSummary').textContent = data.summary;
+  // Use i18n summary
+  document.getElementById('resultSummary').textContent = data.summary[currentLang] || data.summary['en'];
 
   card.style.display = 'block';
 
-  // JSON
   document.getElementById('jsonContent').innerHTML = syntaxHighlight(JSON.stringify(jsonData, null, 2));
   jsonBlock.style.display = 'block';
 }
@@ -452,18 +571,19 @@ function animateCount(el, from, to, duration) {
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
 function syntaxHighlight(json) {
-  return json.replace(/("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")\s*:/g, '<span class="k">$1</span>:')
-    .replace(/: ("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")/g, ': <span class="s">$1</span>')
+  return json.replace(/(\"(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*\")\s*:/g, '<span class="k">$1</span>:')
+    .replace(/: (\"(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*\")/g, ': <span class="s">$1</span>')
     .replace(/: (-?\d+\.?\d*)/g, ': <span class="n">$1</span>')
     .replace(/: (true|false|null)/g, ': <span class="b">$1</span>');
 }
 
 function copyJson() {
   const text = document.getElementById('jsonContent').textContent;
+  const strings = I18N[currentLang];
   navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector('.json-header button');
-    btn.textContent = '✅ 已复制';
-    setTimeout(() => btn.textContent = '📋 复制', 1500);
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = strings['demo.copied'] || '✅ Copied';
+    setTimeout(() => { btn.textContent = strings['demo.copy'] || '📋 Copy'; }, 1500);
   });
 }
 
@@ -471,6 +591,9 @@ function copyJson() {
 document.getElementById('addressInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkRisk();
 });
+
+// Init: detect and apply language
+applyLang(detectLang());
 </script>
 
 </body>
