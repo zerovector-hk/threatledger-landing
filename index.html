@@ -313,6 +313,58 @@ document.getElementById('subscribeForm')?.addEventListener('submit',async functi
 });
 </script>
 
+
+<!-- CREDITS SECTION -->
+<section id="credits" style="padding:60px 24px;max-width:600px;margin:0 auto;">
+  <div style="background:#1E293B;border:1px solid #334155;border-radius:16px;padding:32px;text-align:center;">
+    <h2 style="font-size:1.3rem;margin-bottom:12px;color:#E2E8F0;">💎 API Credits</h2>
+    <div style="display:flex;gap:12px;justify-content:center;margin-bottom:16px;">
+      <input id="apiKeyInput" type="text" placeholder="Enter API Key" style="flex:1;padding:10px 14px;background:#0F172A;border:1px solid #334155;border-radius:8px;color:#E2E8F0;font-size:0.85rem;outline:none;">
+      <button onclick="checkCredits()" style="padding:10px 20px;background:#0A84FF;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Check</button>
+    </div>
+    <div id="creditsResult" style="display:none;background:#0F172A;border-radius:8px;padding:16px;text-align:left;font-size:0.85rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="color:#94A3B8;">Tier</span><span id="crTier" style="color:#0A84FF;font-weight:600;">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="color:#94A3B8;">Remaining</span><span id="crRemaining" style="color:#22C55E;font-weight:600;">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="color:#94A3B8;">Lifetime Used</span><span id="crLifetime" style="color:#E2E8F0;">—</span>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <input id="redeemCode" type="text" placeholder="Redemption code" style="padding:8px 12px;background:#0F172A;border:1px solid #334155;border-radius:6px;color:#E2E8F0;font-size:0.82rem;outline:none;width:160px;">
+      <button onclick="redeemCredits()" style="padding:8px 16px;background:transparent;border:1px solid #334155;border-radius:6px;color:#94A3B8;cursor:pointer;font-size:0.82rem;">Redeem</button>
+    </div>
+    <div id="redeemMsg" style="margin-top:8px;font-size:0.8rem;color:#22C55E;display:none;"></div>
+  </div>
+</section>
+<script>
+async function checkCredits(){
+  var key=document.getElementById('apiKeyInput').value;
+  try{
+    var r=await fetch('https://api.threatledger.net/v1/credits/balance',{headers:{'X-API-Key':key}});
+    var d=await r.json();
+    document.getElementById('crTier').textContent=d.data?.tier||'free';
+    document.getElementById('crRemaining').textContent=d.data?.remaining||0;
+    document.getElementById('crLifetime').textContent=d.data?.lifetime_used||0;
+    document.getElementById('creditsResult').style.display='block';
+  }catch(e){document.getElementById('creditsResult').style.display='block';}
+}
+async function redeemCredits(){
+  var code=document.getElementById('redeemCode').value;
+  try{
+    var r=await fetch('https://api.threatledger.net/v1/credits/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})});
+    var d=await r.json();
+    var msg=document.getElementById('redeemMsg');
+    msg.textContent=d.data?.message||d.error?.message||'Error';
+    msg.style.color=d.data?'#22C55E':'#E63946';
+    msg.style.display='block';
+  }catch(e){}
+}
+</script>
+
 </footer>
 
 <script>
